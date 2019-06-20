@@ -3,7 +3,8 @@ import { StyleSheet, Text, View, Res, TouchableOpacity, Image, Dimensions, Modal
 import { Camera } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 import * as FaceDetector from 'expo-face-detector';
-import Card from '../Card'
+import ipAddress from '../../ipConfig';
+import Card from '../Card';
 import $ from 'jquery';
 
 export default class CameraView extends React.Component {
@@ -31,7 +32,7 @@ export default class CameraView extends React.Component {
             code: b64,
             isLandscape: isLandscape,
         }
-        let url = `http://10.10.69.34:1997/api/recognize`;
+        let url = `http://${ipAddress}:1997/api/recognize`;
         let header = {
             'Content-Type': 'application/json',
         }
