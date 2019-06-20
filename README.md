@@ -22,21 +22,6 @@ To run this project:
   + then run: expo start (make sure you have read above document)
   
 4.$ tree --dirsfirst
-
-├── dataset
-│   ├── Trần Thiện Trong [30 images]
-│   ├── Phạm Hồng Kha [30 images]
-│   ├── Lê Thạch Lâm [30 images]
-│   └── unknown [150 images]
-├── face_detection_model
-│   ├── deploy.prototxt
-│   └── res10_300x300_ssd_iter_140000.caffemodel
-├── openface_nn4.small2.v1.t7
-├── output
-│   ├── embeddings.pickle
-│   ├── le.pickle
-│   └── recognizer.pickle
-├── extract_embeddings.py
-├── train_model.py
-└── recognize.py
-
+<p>
+<img src="https://drive.google.com/uc?id=1v9AIFa3gV5r8e2zrvF4YLxPO5BNx2Puf" width="300" title="hover text">
+</p>
