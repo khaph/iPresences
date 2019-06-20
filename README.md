@@ -10,7 +10,7 @@ To run this project:
   and
   https://drive.google.com/open?id=18egxITP47xabED0HH7ktveyeujoDvO9H
 
-2. To train this detector model: use the 3rd command in command.txt
+2. To train this detector model: step by step running the 3rd and 4th command in command.txt
 
 3. To run this app: read this: https://facebook.github.io/react-native/docs/getting-started about the expo-cli
   + cd iPresences
