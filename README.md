@@ -17,9 +17,23 @@ To run this project:
 2. To train this detector model: step by step running the 3rd and 4th command in command.txt
 
 3. To run this app: read this: https://facebook.github.io/react-native/docs/getting-started about the expo-cli
-  + cd iPresences
-  + run: npm i
-  + then run: expo start (make sure you have read above document)
+
+  <b>+ Start the services: execute "main.py" with python</b>
+  
+  <b>+ config the /iPresences/ipConfig.js with the your ip address (see this pictures below</b>
+  
+  <p align="center">
+  <img src="https://drive.google.com/uc?id=1vGoeFUX6bJkMb43ZC4xUCMNe-Z9Zl2Dj" title="hover text">
+  </p>
+  <p align="center">
+  <img src="https://drive.google.com/uc?id=1oRMflPx93bAhvdmz0g1PHFu1z70SKPz-" title="hover text">
+  </p>
+  
+  <b>+ cd iPresences</b>
+  
+  <b>+ run: npm i</b>
+  
+  <b>+ then run: expo start (make sure you have read above document)</b>
   
 4.$ tree --dirsfirst
 <p>
