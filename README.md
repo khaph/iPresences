@@ -1,6 +1,10 @@
 # iPresences
 CS406 Final Project
 
+<p align="center">
+  <img src="https://drive.google.com/uc?id=1iKbi3TZtRTEuxWmJPS4j67LESRwfbuHD" width="300" title="hover text">
+</p>
+
 First of all: You should read this Document: https://www.pyimagesearch.com/2018/09/24/opencv-face-recognition/
 
 To run this project:
