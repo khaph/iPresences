@@ -15,9 +15,14 @@ export default class CameraView extends React.Component {
             detected: false,
             name: "",
             modalVisible: false,
-            countdownTime: -1,
+            countdownTime: 0,
             isReceived: false,
-            isFirstTime: true
+            isFirstTime: true,
+            loading: false,
+            bounding: {
+                width: 100,
+                height: 100,
+            }
         };
     }
 
@@ -26,64 +31,75 @@ export default class CameraView extends React.Component {
             code: b64,
             isLandscape: isLandscape,
         }
-        let url = `http://192.168.0.108:1997/api/recognize`;
+        let url = `http://10.10.69.34:1997/api/recognize`;
         let header = {
             'Content-Type': 'application/json',
         }
+        this.setState({ loading: true })
         fetch(url, {
             method: "POST",
             headers: header,
             body: JSON.stringify(data)
         }).then(res => { return res.json() })
             .then(res => {
-                this.setState({ name: res.name, isReceived: true })
+                this.setState({ name: res.name, isReceived: true, loading: false })
             })
     }
 
     snap = async () => {
-        if (this.camera && !this.state.detected) {
-            this.setState({ detected: true });
+        if (this.camera) {
             let photo = await this.camera.takePictureAsync({ base64: true });
             await this.camera.pausePreview();
-            this.setState({ face: photo.uri })
+            // let bounding = this.detectFaces(photo.uri)
+            // console.log(bounding.faces)
+            let _bou = {
+                width: 200,
+                height: 200,
+            }
+            this.setState({ face: photo.uri, bounding: _bou })
             this.sendBase64(photo.base64)
         }
     };
 
-    readyToSnap = () => {
+    readyToSnap = async () => {
         let { countdownTime } = this.state;
-        this.setState({ countdownTime: 3 })
-        var c = null;
-
-        if (countdownTime > 0) {
-            c = setInterval(this.countdown)
+        if (countdownTime == 0) {
+            this.snap();
         } else {
-            clearInterval(c)
-            this.snap()
+            await this.setState({ countdownTime: countdownTime - 1 })
+
+            setTimeout(this.readyToSnap, 1000)
         }
     }
 
-    countdown = () => {
-        this.setState({ countdownTime: this.state.countdownTime - 1 })
+    setupSnap = async () => {
+        if (this.state.isFirstTime) {
+            await this.setState({ isFirstTime: false })
+            return
+        }
+        if (!this.state.detected) {
+            await this.setState({ countdownTime: 4, detected: true, isFirstTime: false }, this.readyToSnap)
+        }
     }
 
     resetCamera = async () => {
         await this.camera.resumePreview();
-        this.setState({ detected: false, isReceived: false, name: "", countdownTime: -1, isFirstTime: false })
+        await this.setState({ detected: false, isReceived: false, name: "", countdownTime: 0, isFirstTime: false, loading: false, bounding: { width: 100, height: 100 } })
     }
 
-    ready = () => {
-        this.setState({ ready: true });
-    }
+    detectFaces = async (imageUri) => {
+        const options = { mode: FaceDetector.Constants.Mode.fast };
+        return await FaceDetector.detectFacesAsync(imageUri, options);
+    };
 
     async componentDidMount() {
         const { status } = await Permissions.askAsync(Permissions.CAMERA);
         this.setState({ hasCameraPermission: status === 'granted' });
-        this.resetCamera();
+        // await this.resetCamera();
     }
 
     render() {
-        let { countdownTime, name, isFirstTime } = this.state;
+        let { countdownTime, name, bounding, loading } = this.state;
         const { hasCameraPermission } = this.state;
         if (hasCameraPermission === null) {
             return <View />;
@@ -103,52 +119,36 @@ export default class CameraView extends React.Component {
                             }}
                             style={styles.camera}
                             type={this.state.type}
-                            onFacesDetected={isFirstTime ? null : this.readyToSnap}
+                            onFacesDetected={this.setupSnap}
                             faceDetectorSettings={{
                                 mode: FaceDetector.Constants.Mode.fast,
                                 detectLandmarks: FaceDetector.Constants.Landmarks.none,
                                 runClassifications: FaceDetector.Constants.Classifications.none,
                             }}
+                            onFaceDetectionError={() => { alert(1) }}
                         >
                             <TouchableOpacity onPress={this.resetCamera} >
-                                <Image style={styles.focusImage} source={require("../../assets/images/focus.png")} />
+                                <Image style={{ width: bounding.width, height: bounding.height }} source={require("../../assets/images/focus.png")} />
                             </TouchableOpacity>
-                            {countdownTime != -1 ? <Text style={styles.countdownTime}>{countdownTime}</Text> : null}
+                            {countdownTime != 0 ? <Text style={styles.countdownTime}>{countdownTime}</Text> : null}
                         </Camera>
-                        {name != "" ? <Text style={styles.name}>{name}</Text> : null}
+                        {name != "" ?
+                            <Text style={styles.name}>
+                                {name}
+                            </Text> : null
+                        }
+                        {loading ?
+                            <View style={styles.loadingStyle}>
+                                <Image style={styles.loadingImage} source={require("../../assets/images/loading.gif")} />
+                            </View> : null
+                        }
                     </View>
-
-                    {/* <Modal
-                        style={styles.modal}
-                        animationType="slide"
-                        transparent={true}
-                        visible={this.state.modalVisible}
-                        presentationStyle="overFullScreen"
-                    >
-                        <View style={styles.modal}>
-                            <View>
-                                <Text>Hello World!</Text>
-
-                                <TouchableHighlight
-                                    onPress={() => {
-                                        this.setModalVisible(!this.state.modalVisible);
-                                    }}>
-                                    <Text>Hide Modal</Text>
-                                </TouchableHighlight>
-                            </View>
-                        </View>
-                    </Modal>
-
-                    <TouchableHighlight
-                        onPress={() => {
-                            this.setModalVisible(true);
-                        }}>
-                    </TouchableHighlight> */}
-                </View>
+                </View >
             );
         }
     }
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -200,10 +200,19 @@ const styles = StyleSheet.create({
     },
     name: {
         fontWeight: '700',
-        fontSize: 30,
+        fontSize: 25,
         color: 'black',
         textAlign: 'center',
         marginTop: 10,
         marginBottom: 10,
+    },
+    loadingImage: {
+        width: 30,
+        height: 30,
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    loadingStyle: {
+        alignItems: 'center',
     }
 });

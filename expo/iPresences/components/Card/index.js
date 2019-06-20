@@ -17,15 +17,13 @@ export default class Card extends React.Component {
         } = this.props;
         return (
             <View style={[styles.host, false && styles.host__border]}>
-                <View style={styles.card}>
-                    <Text style={styles.title}>
-                        {title}
-                        <Image source={require('../../assets/images/online.png')} style={styles.statusIcon} />
-                    </Text>
-                    <Text style={styles.label}>
-                        {content}
-                    </Text>
-                </View>
+                <Text style={styles.title}>
+                    {title}
+                    <Image source={require('../../assets/images/online.png')} style={styles.statusIcon} />
+                </Text>
+                <Text style={styles.label}>
+                    {content}
+                </Text>
             </View>
         );
     }

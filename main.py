@@ -8,7 +8,7 @@ ip = socket.gethostbyname(socket.gethostname())
 
 @app.route("/")
 def main():
-    return render_template('program.html')
+    return None
 
 
 @app.route("/api/recognize", methods=['POST'])
@@ -17,7 +17,8 @@ def recognize():
     # print(imageString)
     name = detector.recognize(imageString)
     print(name)
-    res = {'name': name}
+    res = {'name': "Không nhận diện được" if name == None or name ==
+           "unknow" else name}
     return json.dumps(res)
 
 

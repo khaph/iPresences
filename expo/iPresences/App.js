@@ -1,10 +1,39 @@
 import React from "react";
-import { StyleSheet, Text, View, Switch, StatusBar, Dimensions, Image } from "react-native";
+import { StyleSheet, View, TouchableOpacity, StatusBar, Dimensions, Image, Alert } from "react-native";
 import CameraView from './components/Camera';
 import SectionHeader from './components/Header';
 import Card from './components/Card';
 
 export default class App extends React.Component {
+
+  touch = () => {
+    if (this.camera.state.name != "" && this.camera.state.name != "Không nhận diện được") {
+      Alert.alert(
+        'Xác nhận',
+        'Bạn có chắc chắn mình có mặt tại lớp CS406.J21?',
+        [
+          {
+            text: 'Sai tên',
+            onPress: () => this.camera.resetCamera(),
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => this.camera.resetCamera() },
+        ],
+        { cancelable: true },
+      );
+    }
+    else {
+      Alert.alert(
+        'Cảnh báo',
+        'Không nhận diện được bạn',
+        [
+          { text: 'Huỷ bỏ' },
+          { text: 'Thử lại', onPress: () => this.camera.resetCamera() },
+        ],
+        { cancelable: false },
+      );
+    }
+  }
 
   render() {
     return (
@@ -12,8 +41,10 @@ export default class App extends React.Component {
         <StatusBar backgroundColor="blue" barStyle="light-content" hidden={true} />
         <SectionHeader time={true} title="Điểm danh" />
 
-        <CameraView />
-        
+        <CameraView ref={ref => {
+          this.camera = ref;
+        }} />
+
         <Card
           title="CS406.J21"
           content={`Thời gian: 13:30
@@ -23,10 +54,10 @@ Mã lớp: CS406.J21
 Giảng viên: Đỗ Văn Tiến
             `}
         />
-        
-        <View style={styles.card}>
+
+        <TouchableOpacity onPress={this.touch} style={styles.card} >
           <Image style={styles.checkImage} source={require("./assets/images/shield.png")} />
-        </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -54,10 +85,10 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowRadius: 12,
     shadowOpacity: 0.25,
-    position:'absolute',
-    right:20,
-    bottom: 60,
-    textAlign:'center'
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    textAlign: 'center'
 
   },
   checkImage: {

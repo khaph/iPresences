@@ -23,16 +23,15 @@ recognizer = pickle.loads(open(path+'output/recognizer.pickle', "rb").read())
 le = pickle.loads(open(path+'output/le.pickle', "rb").read())
 
 
-def recognize(_base64, _confidence=0.25):
+def recognize(_base64, _confidence=0.5):
     imgdata = base64.b64decode(_base64)
     img = Image.open(BytesIO(imgdata))
     _w, _h = img.size
-    if _w > _h:
+    if _w >= _h:
         img = img.rotate(-90)
     img.save(path+'img.jpg')
 
-    
-    image = imutils.resize(cv2.imread(path+'dataset/Pham Hong Kha/kha.jpg'), width=600)
+    image = imutils.resize(cv2.imread(path+'img.jpg'), width=600)
     (h, w) = image.shape[:2]
 
     imageBlob = cv2.dnn.blobFromImage(
